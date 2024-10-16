@@ -58,11 +58,8 @@ const Render = () => {
         const accessToken = JSON.parse(authUser).accessToken;
 
         const requestUrl = `https://${pageDetails.namespace}.web.tmprl.cloud/api/v1/namespaces/${pageDetails.namespace}/workflows/${pageDetails.workflowId}?execution.runId=${pageDetails.workflowRunId}`;
-        console.log("request: ", requestUrl);
         fetch(requestUrl, {
-            headers: {
-                "Authorization": `Bearer ${accessToken}`
-            }
+            headers: { 'Authorization': `Bearer ${accessToken}` },
         }).then((response) => {
             if (!response.ok) {
                 // refresh page if forbidden
@@ -74,14 +71,48 @@ const Render = () => {
             return response.json()
         }).then((contentResp) => {
             setResponse(contentResp as WorkflowDetails);
-            (window as any).__DEBUG__ = {
-                pageDetails,
-                contentResp,
-            };
+            console.log("workflow details: ", contentResp);
             setIsLoading(false);
         }).catch((error) => {
             console.error("Error fetching workflow details: ", error);
             setIsLoading(false);
+        });
+
+        const historyLog = `https://${pageDetails.namespace}.web.tmprl.cloud/api/v1/namespaces/${pageDetails.namespace}/workflows/${pageDetails.workflowId}/history?execution.runId=${pageDetails.workflowRunId}`;
+        fetch(historyLog, {
+            headers: { 'Authorization': `Bearer ${accessToken}` },
+        }).then((response) => {
+            if (!response.ok) {
+                // refresh page if forbidden
+                if (response.status === 403) {
+                    window.location.reload();
+                    throw new Error("Failed to fetch workflow details - refreshing page");
+                }
+            }
+            return response.json()
+        }).then((contentResp) => {
+            console.log("history log: ", contentResp);
+        }).catch((error) => {
+            console.error("Error fetching workflow history: ", error);
+        });
+        //workflows?query=ParentWorkflowId+%3D+%22discovery-04228e05-471d-420b-8ae6-4178958706c9-090256466236%22+AND+ParentRunId+%3D+%2209d7e6d5-b21f-4e2d-a21b-c48b638aa6d
+        const relationships = `https://${pageDetails.namespace}.web.tmprl.cloud/api/v1/namespaces/${pageDetails.namespace}/workflows?query=ParentWorkflowId = "${pageDetails.workflowId}" AND ParentRunId = "${pageDetails.workflowRunId}"`;
+        fetch(relationships, 
+            {headers: { 'Authorization': `Bearer ${accessToken}` }
+        }).then((response) => {
+            if (!response.ok) {
+                // refresh page if forbidden
+                if (response.status === 403) {
+                    window.location.reload();
+                    throw new Error("Failed to fetch workflow details - refreshing page");
+                }
+            }
+
+            return response.json()
+        }).then((contentResp) => {
+            console.log("relationships: ", contentResp);
+        }).catch((error) => {
+            console.error("Error fetching workflow relationships: ", error);
         });
     }, [pageDetails]);
 
