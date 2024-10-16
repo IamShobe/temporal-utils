@@ -65,7 +65,11 @@ const Render = () => {
             }
         }).then((response) => {
             if (!response.ok) {
-                throw new Error("Failed to fetch workflow details");
+                // refresh page if forbidden
+                if (response.status === 403) {
+                    window.location.reload();
+                    throw new Error("Failed to fetch workflow details - refreshing page");
+                }
             }
             return response.json()
         }).then((contentResp) => {

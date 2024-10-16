@@ -37,8 +37,7 @@ const GrafanaLink: React.FC<{
                 return '';
             }
 
-            return expression
-                .replaceAll('__WORKFLOW_RUN_ID__', pageDetails.workflowRunId);
+            return expression.replaceAll('__WORKFLOW_RUN_ID__', pageDetails.workflowRunId);
         }, [expression, pageDetails, queryStartTime, endTime]);
 
         const url = useMemo(() => {
@@ -73,7 +72,7 @@ const GrafanaLink: React.FC<{
                         },
                     }
                 },
-            }
+            };
 
             const searchParams = new URLSearchParams();
             searchParams.append('schemaVersion', '1');
