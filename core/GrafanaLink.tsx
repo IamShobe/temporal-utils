@@ -47,10 +47,14 @@ const GrafanaLink: React.FC<{
 
             const urlParam = {
                 ptl: {
-                    dataSource: 'grafanacloud-logs',
+                    dataSource: "grafanacloud-logs",
                     queries: [
                         {
                             dataSource: {
+                                type: 'loki',
+                                uid: 'grafanacloud-logs',
+                            },
+                            datasource: {
                                 type: 'loki',
                                 uid: 'grafanacloud-logs',
                             },
