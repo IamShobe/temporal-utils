@@ -25,11 +25,12 @@ const GrafanaLink: React.FC<{
         }, [workflowDetails]);
 
         const endTime = useMemo(() => {
-            if (workflowDetails.workflowExecutionInfo.status !== WORKFLOW_STATUS_COMPLETED) {
+            const closeTime = workflowDetails.workflowExecutionInfo.closeTime;
+            if (!closeTime) {
                 return add(new Date(), { hours: 3 });
             }
 
-            return add(workflowDetails.workflowExecutionInfo.closeTime, { minutes: 10 });
+            return add(closeTime, { minutes: 10 });
         }, [workflowDetails]);
 
         const fullExpression = useMemo(() => {
